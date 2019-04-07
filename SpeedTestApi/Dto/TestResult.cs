@@ -16,9 +16,8 @@ namespace SpeedTestApi.Dto
         [Required]
         public int Device { get; set; }
 
-        [Range(0, long.MaxValue)]
         [Required]
-        public long Timestamp { get; set; }
+        public DateTime TestDate { get; set; }
 
         [Required]
         public TestData Data { get; set; }

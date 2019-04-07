@@ -22,7 +22,7 @@ namespace SpeedTestApi.Database.Models
         public int Device { get; set; }
 
         [Required]
-        public long Timestamp { get; set; }
+        public DateTime TestDate { get; set; }
 
         [Required]
         public double DownloadSpeed { get; set; }
@@ -81,7 +81,7 @@ namespace SpeedTestApi.Database.Models
                 SessionId = testResult.SessionId.ToString(),
                 User = testResult.User,
                 Device = testResult.Device,
-                Timestamp = testResult.Timestamp,
+                TestDate = testResult.TestDate,
                 DownloadSpeed = speeds.Download,
                 UploadSpeed = speeds.Upload,
                 ClientIp = client.Ip,
@@ -106,7 +106,7 @@ namespace SpeedTestApi.Database.Models
                 SessionId = Guid.Parse(SessionId),
                 User = User,
                 Device = Device,
-                Timestamp = Timestamp,
+                TestDate = TestDate,
                 Data = new TestData
                 {
                     Speeds = new TestSpeeds
