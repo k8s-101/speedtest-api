@@ -1,8 +1,10 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SpeedTestApi.Database;
 using SpeedTestApi.Database.Models;
 using SpeedTestApi.Dto;
+using SpeedTestApi.Query;
 
 namespace SpeedTestApi.Services
 {
@@ -22,16 +24,15 @@ namespace SpeedTestApi.Services
             await _database.SaveChangesAsync();
         }
 
-        public Task<TestResult[]> GetTestResults()
+        public async Task<TestResult[]> GetTestResults(QueryParameters parameters)
         {
-            var testResults =
+            return await
                 _database.SpeedTestResults
-                    .OrderByDescending(speedTest => speedTest.Timestamp)
-                    .Take(10)
+                    .FilterTickets(parameters)
+                    .SortTickets(parameters)
+                    .PaginateTickets(parameters)
                     .Select(speedTest => speedTest.ToTestResult())
-                    .ToArray();
-
-            return Task.FromResult(testResults);
+                    .ToArrayAsync();
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SpeedTestApi.Dto;
+using SpeedTestApi.Query;
 using SpeedTestApi.Services;
 
 namespace SpeedTestApi.Controllers
@@ -28,14 +29,13 @@ namespace SpeedTestApi.Controllers
         // GET /SpeedTest
         [HttpGet]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        public async Task<ActionResult<TestResult[]>> GetSpeedTests()
+        public async Task<TestResult[]> GetSpeedTests([FromQuery] QueryParameters parameters)
         {
             Console.WriteLine("GET /SpeedTest");
 
-            var speedTests = await _dbService.GetTestResults();
+            var speedTests = await _dbService.GetTestResults(parameters);
 
-            return Ok(speedTests);
+            return speedTests;
         }
 
         // POST /SpeedTest
