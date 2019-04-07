@@ -1,0 +1,9 @@
+# VSCode user settings
+.vscode/
+
+# Development configuration
+**/appsettings.Development.json
+
+# Build files
+**/obj
+**/bin
