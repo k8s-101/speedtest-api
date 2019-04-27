@@ -25,6 +25,7 @@ namespace SpeedTestApi
             services.AddTransient<ISpeedTestDbService, SpeedTestDbService>();
 
             services
+                .AddCors()
                 .AddSwaggerGen(options =>
                 {
                     options.SwaggerDoc("v1", new Info { Title = "SpeedTestApi", Version = "v1" });
@@ -37,13 +38,24 @@ namespace SpeedTestApi
         {
             if (environment.IsDevelopment())
             {
-                application.UseDeveloperExceptionPage();
+                application
+                    .UseDeveloperExceptionPage()
+                    .UseDummyDataSeed();
             }
             else
             {
-                application.UseHsts();
-                application.UseHttpsRedirection();
+                application
+                    .UseHsts()
+                    .UseHttpsRedirection();
             }
+
+            application.UseCors(policy =>
+            {
+                policy.AllowAnyOrigin();
+                policy.AllowAnyMethod();
+                policy.AllowAnyHeader();
+                policy.AllowCredentials();
+            });
 
             application
                 .UseSwaggerUI(options =>
