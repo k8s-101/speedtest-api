@@ -1,0 +1,33 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: speedtest-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: speedtest-api
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: speedtest-api
+          image: k8s101registry.azurecr.io/speedtest-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: speedtest-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: speedtest-api
+  ports:
+  - protocol: TCP
+    port: 80
