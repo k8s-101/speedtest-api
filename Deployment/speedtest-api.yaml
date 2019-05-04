@@ -13,7 +13,7 @@ spec:
         - name: regcred
       containers:
         - name: speedtest-api
-          image: k8s101registry.azurecr.io/speedtest-api:latest
+          image: taeregistry.azurecr.io/speed-test-api:0.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -22,7 +22,6 @@ spec:
               value: /
 
 ---
-
 
 kind: Service
 apiVersion: v1
@@ -35,5 +34,5 @@ spec:
   ports:
   - protocol: TCP
     port: 80
----
 
+---
