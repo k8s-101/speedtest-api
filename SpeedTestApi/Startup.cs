@@ -30,6 +30,7 @@ namespace SpeedTestApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             services.AddDbContext<SpeedTestDbContext>(options => options.UseInMemoryDatabase("speedtest-api-database"));
             services.AddTransient<ISpeedTestDbService, SpeedTestDbService>();
 
@@ -40,12 +41,9 @@ namespace SpeedTestApi
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowAnyOrigin()));
-            services
-                .AddSwaggerGen(options =>
-                {
-                    options.SwaggerDoc(_apiInfo.Version, _apiInfo);
-                })
-                .AddMvc();
+
+            services.AddSwaggerGen(options =>
+                options.SwaggerDoc(_apiInfo.Version, _apiInfo));
         }
 
         public void Configure(IApplicationBuilder application, IHostEnvironment environment)
