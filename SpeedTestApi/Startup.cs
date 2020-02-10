@@ -1,17 +1,26 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using SpeedTestApi.Database;
 using SpeedTestApi.Services;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace SpeedTestApi
 {
     public class Startup
     {
+        private const string AllowAllOrigins = "AllowAllOrigins";
+
+        private readonly OpenApiInfo _apiInfo = new OpenApiInfo
+        {
+            Version = "v1",
+            Title = "SpeedTestApi",
+            Description = "An API for storing SpeedTests.",
+        };
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -24,17 +33,22 @@ namespace SpeedTestApi
             services.AddDbContext<SpeedTestDbContext>(options => options.UseInMemoryDatabase("speedtest-api-database"));
             services.AddTransient<ISpeedTestDbService, SpeedTestDbService>();
 
+            services.AddCors(
+                options => options.AddPolicy(
+                    AllowAllOrigins,
+                    builder => builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin()));
             services
-                .AddCors()
                 .AddSwaggerGen(options =>
                 {
-                    options.SwaggerDoc("v1", new Info { Title = "SpeedTestApi", Version = "v1" });
+                    options.SwaggerDoc(_apiInfo.Version, _apiInfo);
                 })
-                .AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .AddMvc();
         }
 
-        public void Configure(IApplicationBuilder application, IHostingEnvironment environment)
+        public void Configure(IApplicationBuilder application, IHostEnvironment environment)
         {
             if (environment.IsDevelopment())
             {
@@ -49,21 +63,15 @@ namespace SpeedTestApi
                     .UseHttpsRedirection();
             }
 
-            application.UseCors(policy =>
-            {
-                policy.AllowAnyOrigin();
-                policy.AllowAnyMethod();
-                policy.AllowAnyHeader();
-                policy.AllowCredentials();
-            });
-
             application
-                .UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "speedtest-api");
-                })
+                .UseCors(AllowAllOrigins)
                 .UseSwagger()
-                .UseMvc();
+                .UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", _apiInfo.Title);
+                })
+                .UseRouting()
+                .UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
