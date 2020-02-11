@@ -1,9 +1,12 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: speedtest-api
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: speedtest-api
   template:
     metadata:
       labels:
@@ -13,7 +16,7 @@ spec:
         - name: regcred
       containers:
         - name: speedtest-api
-          image: taeregistry.azurecr.io/speed-test-api:0.0.1
+          image: k8s101registry.azurecr.io/speed-test-api:0.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 80
@@ -22,7 +25,6 @@ spec:
               value: /
 
 ---
-
 kind: Service
 apiVersion: v1
 metadata:
@@ -32,7 +34,8 @@ spec:
   selector:
     app: speedtest-api
   ports:
-  - protocol: TCP
-    port: 80
+    - protocol: TCP
+      port: 80
 
 ---
+
