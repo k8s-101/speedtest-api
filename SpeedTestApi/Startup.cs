@@ -61,7 +61,7 @@ namespace SpeedTestApi
                     .UseHttpsRedirection();
             }
 
-            var basePath = Configuration["hostBasePath"];
+            var basePath = Configuration["basePath"];
             application.UseSwagger(c =>
                 {
                     c.RouteTemplate = "swagger/{documentName}/swagger.json";
