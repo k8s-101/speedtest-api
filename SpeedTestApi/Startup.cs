@@ -67,12 +67,12 @@ namespace SpeedTestApi
                     c.RouteTemplate = "swagger/{documentName}/swagger.json";
                     c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                     {
-                        var httpsUrl = $"https://{httpReq.Host.Value}{basePath}";
                         var httpUrl = $"http://{httpReq.Host.Value}{basePath}";
+                        var httpsUrl = $"https://{httpReq.Host.Value}{basePath}";
                         swaggerDoc.Servers = new OpenApiServer[]
                         {
-                            new OpenApiServer { Url = httpsUrl },
                             new OpenApiServer { Url = httpUrl },
+                            new OpenApiServer { Url = httpsUrl },
                         };
                     });
                 });
