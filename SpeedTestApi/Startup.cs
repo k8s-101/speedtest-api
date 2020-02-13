@@ -61,13 +61,30 @@ namespace SpeedTestApi
                     .UseHttpsRedirection();
             }
 
+            var basePath = Configuration["hostBasePath"];
+            application.UseSwagger(c =>
+                {
+                    c.RouteTemplate = "swagger/{documentName}/swagger.json";
+                    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                    {
+                        var httpsUrl = $"https://{httpReq.Host.Value}{basePath}";
+                        var httpUrl = $"http://{httpReq.Host.Value}{basePath}";
+                        swaggerDoc.Servers = new OpenApiServer[]
+                        {
+                            new OpenApiServer { Url = httpsUrl },
+                            new OpenApiServer { Url = httpUrl },
+                        };
+                    });
+                });
+
+            var swaggerEndpointUrl = $"{basePath.TrimEnd('/')}/swagger/v1/swagger.json";
+            application.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(swaggerEndpointUrl, _apiInfo.Title);
+            });
+
             application
                 .UseCors(AllowAllOrigins)
-                .UseSwagger()
-                .UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", _apiInfo.Title);
-                })
                 .UseRouting()
                 .UseEndpoints(endpoints => endpoints.MapControllers());
         }
